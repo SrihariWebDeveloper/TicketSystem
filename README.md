@@ -1,4 +1,30 @@
-# React + TypeScript + Vite
+# SupportDesk Ticket Management System
+
+Standalone React + TypeScript + Vite CRM ticket management frontend.
+
+## Deploy to Vercel
+
+1. Push the `TicketSystem` folder to a GitHub repository.
+2. In Vercel, select **Add New Project** and import the repository.
+3. If the repository contains multiple projects, set **Root Directory** to `TicketSystem`.
+4. Use these project settings:
+  - Framework preset: `Vite`
+  - Build command: `npm run build`
+  - Output directory: `dist`
+  - Install command: `npm install`
+5. Deploy.
+
+The included `vercel.json` keeps React Router routes working on direct browser visits.
+
+The app is frontend-only. Authentication, users, tickets, and changes are stored in the browser's localStorage; no environment variables are required.
+
+## Local production check
+
+```bash
+npm install
+npm run build
+npm run preview
+```
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
