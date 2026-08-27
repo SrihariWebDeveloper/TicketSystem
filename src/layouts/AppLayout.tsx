@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate} from "react-router-dom";
 import { Icon } from "../components/Icon";
 import { SearchInput } from "../components/ui";
 import { useAuth } from "../hooks/useAuth";
@@ -22,7 +22,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const isAdmin = currentUser?.role === "Admin";
   const { tickets } = useTickets();
-  const location = useLocation();
   const [query, setQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const matches = query.trim() ? tickets.filter((ticket) => `${ticket.id} ${ticket.title} ${ticket.requester}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5) : [];
@@ -57,7 +56,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                           ? "layers"
                           : label === "Schools"
                             ? "school"
-                          : label === "Settings" || label === "Announcements"
+                          : label === "Announcements"
                             ? "settings"
                             : "file"
                     }
