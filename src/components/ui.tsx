@@ -3,6 +3,7 @@ import {
   type InputHTMLAttributes,
   type ReactNode,
 } from "react";
+import type { ChangeEvent } from "react";
 import type { Priority, TicketStatus } from "../types";
 export function Button({
   children,
@@ -57,12 +58,16 @@ export function PriorityBadge({ priority }: { priority: Priority }) {
 }
 export function SearchInput({
   placeholder = "Search",
+  value,
+  onChange,
 }: {
   placeholder?: string;
+  value?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <label className="search">
-      <input placeholder={placeholder} />
+      <input placeholder={placeholder} value={value} onChange={onChange} />
     </label>
   );
 }

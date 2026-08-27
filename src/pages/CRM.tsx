@@ -11,7 +11,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   Badge,
   Button,
@@ -101,7 +101,8 @@ function Row({
 export function TicketsPage({ mine = false }: { mine?: boolean }) {
   const { tickets, updateTicket } = useTickets();
   const { currentUser } = useAuth();
-  const [q, setQ] = useState(""),
+  const [searchParams] = useSearchParams();
+  const [q, setQ] = useState(searchParams.get("search") ?? ""),
     [status, setStatus] = useState("All"),
     [priority, setPriority] = useState("All"),
     [category, setCategory] = useState("All"),
@@ -830,12 +831,21 @@ export function CategoriesPage() {
   const { tickets } = useTickets();
   const [rows, setRows] = useState(categories);
   const [name, setName] = useState("");
-  const add = () => {
+  const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
+  const save = () => {
     if (name.trim()) {
-      setRows([...rows, name as Category]);
+      if (editing) {
+        setRows(rows.map((row) => row === editing ? name.trim() as Category : row));
+      } else {
+        setRows([...rows, name.trim() as Category]);
+      }
       setName("");
+      setEditing(null);
     }
   };
+  const filteredRows = rows.filter((row) => row.toLowerCase().includes(query.toLowerCase()));
+  const edit = (row: string) => { setEditing(row); setName(row); window.scrollTo({ top: 0, behavior: "smooth" }); };
   return (
     <>
 
@@ -850,14 +860,18 @@ export function CategoriesPage() {
           placeholder="New category name"
           required
         />
-        <Button onClick={add}>Add category</Button>
+          <Button onClick={save}>{editing ? "Update category" : "Add category"}</Button>
+          {editing && <button className="text-button" onClick={() => { setEditing(null); setName(""); }}>Cancel</button>}
       </div>
         }
       />
       <Card className="table-card">
         <div className="card-title">
-          <h2>Ticket categories</h2>
-          <p>Manage the labels used by your support team.</p>
+          <div>
+            <h2>Ticket categories</h2>
+            <p>Manage the labels used by your support team.</p>
+          </div>
+          <label className="category-search"><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search categories..." /></label>
         </div>
         <div className="desktop-table">
           <table>
@@ -871,7 +885,7 @@ export function CategoriesPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((x) => (
+              {filteredRows.map((x) => (
                 <tr key={x}>
                   <td>
                     <b>{x}</b>
@@ -882,6 +896,9 @@ export function CategoriesPage() {
                     <Badge tone="success">Active</Badge>
                   </td>
                   <td>
+                    <button className="text-button category-edit" onClick={() => edit(x)}>
+                      Edit
+                    </button>
                     <button
                       className="icon-button danger"
                       onClick={() => setRows(rows.filter((y) => y !== x))}
@@ -896,13 +913,16 @@ export function CategoriesPage() {
           </table>
         </div>
         <div className="mobile-category-list">
-          {rows.map((x) => (
+          {filteredRows.map((x) => (
             <div className="mobile-category" key={x}>
               <div className="mobile-category-heading">
                 <div>
                   <strong>{x}</strong>
                   <Badge tone="success">Active</Badge>
                 </div>
+                <button className="text-button category-edit" onClick={() => edit(x)}>
+                  Edit
+                </button>
                 <button
                   className="icon-button danger"
                   onClick={() => setRows(rows.filter((y) => y !== x))}

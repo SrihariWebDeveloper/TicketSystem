@@ -56,10 +56,16 @@ export interface CategoryRecord {
   active: boolean;
 }
 export interface Announcement {
+  id: string;
   title: string;
-  date: string;
-  body: string;
-  label: string;
+  content: string;
+  author: string;
+  audience: "All Users" | "Developers" | "Staff" | "Admins";
+  priority: "Normal" | "Important" | "Urgent";
+  status: "Draft" | "Scheduled" | "Published" | "Archived";
+  publishDate: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface Tutorial {
   title: string;

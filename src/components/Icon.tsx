@@ -54,6 +54,11 @@ export function Icon({
           <path d="m12 3 8 4-8 4-8-4 8-4Z" />
           <path d="m4 12 8 4 8-4M4 17l8 4 8-4" />
         </>
+          ) : name === "school" ? (
+            <>
+              <path d="m3 9 9-5 9 5-9 5-9-5Z" />
+              <path d="M7 11.5V16c2.8 2 7.2 2 10 0v-4.5M21 10v6" />
+            </>
       ) : name === "settings" ? (
         <>
           <circle cx="12" cy="12" r="3" />
