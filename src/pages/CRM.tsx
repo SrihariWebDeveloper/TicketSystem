@@ -11,7 +11,12 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   Badge,
   Button,
@@ -131,7 +136,7 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
             ? a.title.localeCompare(b.title)
             : sort === "priority"
               ? priorities.indexOf(b.priority as Priority) -
-              priorities.indexOf(a.priority as Priority)
+                priorities.indexOf(a.priority as Priority)
               : b.id.localeCompare(a.id),
         ),
     [base, q, status, priority, category, assignee, sort],
@@ -280,14 +285,14 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
                           setSelected(
                             all
                               ? selected.filter(
-                                (id) => !shown.some((t) => t.id === id),
-                              )
+                                  (id) => !shown.some((t) => t.id === id),
+                                )
                               : [
-                                ...new Set([
-                                  ...selected,
-                                  ...shown.map((t) => t.id),
-                                ]),
-                              ],
+                                  ...new Set([
+                                    ...selected,
+                                    ...shown.map((t) => t.id),
+                                  ]),
+                                ],
                           )
                         }
                       />
@@ -518,16 +523,16 @@ export function CreateTicketPage() {
   const { createTicket } = useTickets();
   const navigate = useNavigate();
   const [f, setF] = useState({
-    requester: "",
-    email: "",
-    title: "",
-    description: "",
-    category: "Account" as Category,
-    priority: "Medium" as Priority,
-    assignee: "Unassigned",
-    status: "Open" as TicketStatus,
-    tags: "",
-  }),
+      requester: "",
+      email: "",
+      title: "",
+      description: "",
+      category: "Account" as Category,
+      priority: "Medium" as Priority,
+      assignee: "Unassigned",
+      status: "Open" as TicketStatus,
+      tags: "",
+    }),
     [error, setError] = useState("");
   const set = (key: string, value: string) =>
     setF((x) => ({ ...x, [key]: value }));
@@ -836,7 +841,11 @@ export function CategoriesPage() {
   const save = () => {
     if (name.trim()) {
       if (editing) {
-        setRows(rows.map((row) => row === editing ? name.trim() as Category : row));
+        setRows(
+          rows.map((row) =>
+            row === editing ? (name.trim() as Category) : row,
+          ),
+        );
       } else {
         setRows([...rows, name.trim() as Category]);
       }
@@ -844,11 +853,16 @@ export function CategoriesPage() {
       setEditing(null);
     }
   };
-  const filteredRows = rows.filter((row) => row.toLowerCase().includes(query.toLowerCase()));
-  const edit = (row: string) => { setEditing(row); setName(row); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const filteredRows = rows.filter((row) =>
+    row.toLowerCase().includes(query.toLowerCase()),
+  );
+  const edit = (row: string) => {
+    setEditing(row);
+    setName(row);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <>
-
       <PageHeader
         title="Categories"
         subtitle="Organize and route support requests."
@@ -860,8 +874,20 @@ export function CategoriesPage() {
               placeholder="New category name"
               required
             />
-            <Button onClick={save}>{editing ? "Update category" : "Add category"}</Button>
-            {editing && <button className="text-button" onClick={() => { setEditing(null); setName(""); }}>Cancel</button>}
+            <Button onClick={save}>
+              {editing ? "Update category" : "Add category"}
+            </Button>
+            {editing && (
+              <button
+                className="text-button"
+                onClick={() => {
+                  setEditing(null);
+                  setName("");
+                }}
+              >
+                Cancel
+              </button>
+            )}
           </div>
         }
       />
@@ -871,7 +897,13 @@ export function CategoriesPage() {
             <h2>Ticket categories</h2>
             <p>Manage the labels used by your support team.</p>
           </div>
-          <label className="category-search"><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search categories..." /></label>
+          <label className="category-search">
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search categories..."
+            />
+          </label>
         </div>
         <div className="desktop-table">
           <table>
@@ -896,7 +928,10 @@ export function CategoriesPage() {
                     <Badge tone="success">Active</Badge>
                   </td>
                   <td>
-                    <button className="text-button category-edit" onClick={() => edit(x)}>
+                    <button
+                      className="text-button category-edit"
+                      onClick={() => edit(x)}
+                    >
                       Edit
                     </button>
                     <button
@@ -920,7 +955,10 @@ export function CategoriesPage() {
                   <strong>{x}</strong>
                   <Badge tone="success">Active</Badge>
                 </div>
-                <button className="text-button category-edit" onClick={() => edit(x)}>
+                <button
+                  className="text-button category-edit"
+                  onClick={() => edit(x)}
+                >
                   Edit
                 </button>
                 <button
@@ -932,7 +970,9 @@ export function CategoriesPage() {
                 </button>
               </div>
               <p>{x} related support requests</p>
-              <small>{tickets.filter((t) => t.category === x).length} tickets</small>
+              <small>
+                {tickets.filter((t) => t.category === x).length} tickets
+              </small>
             </div>
           ))}
         </div>
