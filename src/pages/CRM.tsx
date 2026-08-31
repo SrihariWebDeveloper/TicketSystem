@@ -131,7 +131,7 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
             ? a.title.localeCompare(b.title)
             : sort === "priority"
               ? priorities.indexOf(b.priority as Priority) -
-                priorities.indexOf(a.priority as Priority)
+              priorities.indexOf(a.priority as Priority)
               : b.id.localeCompare(a.id),
         ),
     [base, q, status, priority, category, assignee, sort],
@@ -280,14 +280,14 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
                           setSelected(
                             all
                               ? selected.filter(
-                                  (id) => !shown.some((t) => t.id === id),
-                                )
+                                (id) => !shown.some((t) => t.id === id),
+                              )
                               : [
-                                  ...new Set([
-                                    ...selected,
-                                    ...shown.map((t) => t.id),
-                                  ]),
-                                ],
+                                ...new Set([
+                                  ...selected,
+                                  ...shown.map((t) => t.id),
+                                ]),
+                              ],
                           )
                         }
                       />
@@ -518,16 +518,16 @@ export function CreateTicketPage() {
   const { createTicket } = useTickets();
   const navigate = useNavigate();
   const [f, setF] = useState({
-      requester: "",
-      email: "",
-      title: "",
-      description: "",
-      category: "Account" as Category,
-      priority: "Medium" as Priority,
-      assignee: "Unassigned",
-      status: "Open" as TicketStatus,
-      tags: "",
-    }),
+    requester: "",
+    email: "",
+    title: "",
+    description: "",
+    category: "Account" as Category,
+    priority: "Medium" as Priority,
+    assignee: "Unassigned",
+    status: "Open" as TicketStatus,
+    tags: "",
+  }),
     [error, setError] = useState("");
   const set = (key: string, value: string) =>
     setF((x) => ({ ...x, [key]: value }));
@@ -854,15 +854,15 @@ export function CategoriesPage() {
         subtitle="Organize and route support requests."
         action={
           <div className="category-form">
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="New category name"
-          required
-        />
-          <Button onClick={save}>{editing ? "Update category" : "Add category"}</Button>
-          {editing && <button className="text-button" onClick={() => { setEditing(null); setName(""); }}>Cancel</button>}
-      </div>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="New category name"
+              required
+            />
+            <Button onClick={save}>{editing ? "Update category" : "Add category"}</Button>
+            {editing && <button className="text-button" onClick={() => { setEditing(null); setName(""); }}>Cancel</button>}
+          </div>
         }
       />
       <Card className="table-card">
