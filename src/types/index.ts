@@ -3,7 +3,11 @@ export type TicketStatus =
   | "In Progress"
   | "Pending"
   | "Resolved"
-  | "Closed";
+  | "Closed"
+  | "Active"
+  | "Onboarding"
+  | "On Hold"
+  | "Inactive";
 export type Priority = "Low" | "Medium" | "High" | "Critical";
 export type Category =
   | "Account"
@@ -29,6 +33,7 @@ export interface Ticket {
   priority: Priority;
   assignee: string;
   status: TicketStatus;
+  schoolId?: string;
   created: string;
   updated: string;
   description: string;

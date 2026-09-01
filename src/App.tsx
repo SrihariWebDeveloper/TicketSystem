@@ -37,6 +37,7 @@ export default function App() {
                 <Route path="/my-tickets" element={<TicketsPage mine />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/schools" element={<SchoolsPage />} />
+                <Route path="/schools/:id" element={<SchoolsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/announcements" element={<AnnouncementsPage />} />
                 <Route

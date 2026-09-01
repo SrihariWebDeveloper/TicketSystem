@@ -197,30 +197,39 @@ export function AnnouncementsPage() {
                             placeholder="Search announcements..."
                         />
                     </label>
-                    <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                        <option>All</option>
-                        {announcementStatuses.map((x) => (
-                            <option key={x}>{x}</option>
-                        ))}
-                    </Select>
-                    <Select
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
-                    >
-                        <option>All</option>
-                        {announcementPriorities.map((x) => (
-                            <option key={x}>{x}</option>
-                        ))}
-                    </Select>
-                    <Select
-                        value={audience}
-                        onChange={(e) => setAudience(e.target.value)}
-                    >
-                        <option>All</option>
-                        {announcementAudiences.map((x) => (
-                            <option key={x}>{x}</option>
-                        ))}
-                    </Select>
+                    <label className="filter-field">
+                        <span>Status</span>
+                        <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                            <option>All</option>
+                            {announcementStatuses.map((x) => (
+                                <option key={x}>{x}</option>
+                            ))}
+                        </Select>
+                    </label>
+                    <label className="filter-field">
+                        <span>Priority</span>
+                        <Select
+                            value={priority}
+                            onChange={(e) => setPriority(e.target.value)}
+                        >
+                            <option>All</option>
+                            {announcementPriorities.map((x) => (
+                                <option key={x}>{x}</option>
+                            ))}
+                        </Select>
+                    </label>
+                    <label className="filter-field">
+                        <span>Audience</span>
+                        <Select
+                            value={audience}
+                            onChange={(e) => setAudience(e.target.value)}
+                        >
+                            <option>All</option>
+                            {announcementAudiences.map((x) => (
+                                <option key={x}>{x}</option>
+                            ))}
+                        </Select>
+                    </label>
                 </div>
                 {filtered.length === 0 ? (
                     <EmptyState

@@ -36,6 +36,7 @@ import {
 } from "../hooks/useTickets";
 import type { Category, Priority, Ticket, TicketStatus } from "../types";
 import { useAuth } from "../hooks/useAuth";
+import { readSchools } from "../data/schools";
 export function PageHeader({
   title,
   subtitle,
@@ -107,11 +108,13 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
   const { tickets, updateTicket } = useTickets();
   const { currentUser } = useAuth();
   const [searchParams] = useSearchParams();
+  const schools = readSchools();
   const [q, setQ] = useState(searchParams.get("search") ?? ""),
     [status, setStatus] = useState("All"),
     [priority, setPriority] = useState("All"),
     [category, setCategory] = useState("All"),
     [assignee, setAssignee] = useState("All"),
+    [schoolFilter, setSchoolFilter] = useState("All"),
     [sort, setSort] = useState("newest"),
     [page, setPage] = useState(1),
     [selected, setSelected] = useState<string[]>([]),
@@ -131,6 +134,12 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
         .filter((t) => priority === "All" || t.priority === priority)
         .filter((t) => category === "All" || t.category === category)
         .filter((t) => assignee === "All" || t.assignee === assignee)
+        .filter(
+          (t) =>
+            schoolFilter === "All" ||
+            (t.schoolId ?? "") === schoolFilter ||
+            (!t.schoolId && schoolFilter === "Unassigned"),
+        )
         .sort((a, b) =>
           sort === "title"
             ? a.title.localeCompare(b.title)
@@ -139,7 +148,7 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
                 priorities.indexOf(a.priority as Priority)
               : b.id.localeCompare(a.id),
         ),
-    [base, q, status, priority, category, assignee, sort],
+    [base, q, status, priority, category, assignee, schoolFilter, sort],
   );
   const shown = rows.slice((page - 1) * 8, page * 8);
   const reset = () => {
@@ -148,6 +157,7 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
     setPriority("All");
     setCategory("All");
     setAssignee("All");
+    setSchoolFilter("All");
     setPage(1);
   };
   const all = shown.length > 0 && shown.every((t) => selected.includes(t.id));
@@ -196,44 +206,73 @@ export function TicketsPage({ mine = false }: { mine?: boolean }) {
               }}
             />
           </label>
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option>All</option>
-            {statuses.map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </Select>
-          <Select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-          >
-            <option>All</option>
-            {priorities.map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </Select>
-          <Select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option>All</option>
-            {categories.map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </Select>
-          <Select
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-          >
-            <option>All</option>
-            {assignees.map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </Select>
-          <Select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="newest">Newest</option>
-            <option value="title">Subject A-Z</option>
-            <option value="priority">Priority</option>
-          </Select>
+          <label className="filter-field">
+            <span>Status</span>
+            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option>All</option>
+              {statuses.map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </Select>
+          </label>
+          <label className="filter-field">
+            <span>Priority</span>
+            <Select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+            >
+              <option>All</option>
+              {priorities.map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </Select>
+          </label>
+          <label className="filter-field">
+            <span>Category</span>
+            <Select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option>All</option>
+              {categories.map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </Select>
+          </label>
+          <label className="filter-field">
+            <span>Assignee</span>
+            <Select
+              value={assignee}
+              onChange={(e) => setAssignee(e.target.value)}
+            >
+              <option>All</option>
+              {assignees.map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </Select>
+          </label>
+          <label className="filter-field">
+            <span>School</span>
+            <Select
+              value={schoolFilter}
+              onChange={(e) => setSchoolFilter(e.target.value)}
+            >
+              <option value="All">All Schools</option>
+              {schools.map((school) => (
+                <option key={school.id} value={school.id}>
+                  {school.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="filter-field">
+            <span>Sort by</span>
+            <Select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="newest">Newest</option>
+              <option value="title">Subject A-Z</option>
+              <option value="priority">Priority</option>
+            </Select>
+          </label>
           <button className="text-button" onClick={reset}>
             Reset
           </button>
@@ -522,6 +561,7 @@ function Field({
 export function CreateTicketPage() {
   const { createTicket } = useTickets();
   const navigate = useNavigate();
+  const schools = readSchools();
   const [f, setF] = useState({
       requester: "",
       email: "",
@@ -531,6 +571,7 @@ export function CreateTicketPage() {
       priority: "Medium" as Priority,
       assignee: "Unassigned",
       status: "Open" as TicketStatus,
+      schoolId: schools[0]?.id ?? "",
       tags: "",
     }),
     [error, setError] = useState("");
@@ -538,12 +579,13 @@ export function CreateTicketPage() {
     setF((x) => ({ ...x, [key]: value }));
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!f.requester || !f.title || !f.description) {
-      setError("Requester, subject, and description are required.");
+    if (!f.requester || !f.title || !f.description || !f.schoolId) {
+      setError("Requester, school, subject, and description are required.");
       return;
     }
     const t = createTicket({
       ...f,
+      schoolId: f.schoolId,
       tags: f.tags
         .split(",")
         .map((x) => x.trim())
@@ -572,6 +614,18 @@ export function CreateTicketPage() {
                 value={f.email}
                 onChange={(e) => set("email", e.target.value)}
               />
+            </Field>
+            <Field label="School *">
+              <Select
+                value={f.schoolId}
+                onChange={(e) => set("schoolId", e.target.value)}
+              >
+                {schools.map((school) => (
+                  <option key={school.id} value={school.id}>
+                    {school.name}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label="Subject *" wide>
               <Input

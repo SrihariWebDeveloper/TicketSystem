@@ -110,6 +110,7 @@ export function TicketProvider({ children }: { children: ReactNode }) {
       id: `TK-${1001 + ticketRows.length}`,
       created: "Aug 25, 2026",
       updated: now(),
+      schoolId: ticket.schoolId,
     };
     setTicketRows((rows) => [created, ...rows]);
     setActivityRows((rows) => ({

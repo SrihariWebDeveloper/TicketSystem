@@ -1,8 +1,13 @@
-import { ArrowUpRight, CheckCircle2, Ticket as TicketIcon } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Ticket as TicketIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, PriorityBadge, StatusBadge } from "../components/ui";
 import { useTickets } from "../hooks/useTickets";
 import { useAuth } from "../hooks/useAuth";
+import { readSchools } from "../data/schools";
 import { PageHeader } from "./CRM";
 function Stat({
   label,
@@ -31,10 +36,28 @@ function Stat({
 export function Dashboard() {
   const { tickets } = useTickets();
   const { currentUser } = useAuth();
+  const schools = readSchools();
   const count = (status: string) =>
     tickets.filter((ticket) => ticket.status === status).length;
   const mine = tickets.filter((ticket) => ticket.assignee === currentUser?.name);
   const recent = tickets.slice(0, 5);
+  const schoolStats = {
+    total: schools.length,
+    active: schools.filter((school) => school.status === "Active").length,
+    onboarding: schools.filter((school) => school.status === "Onboarding").length,
+    onHold: schools.filter((school) => school.status === "On Hold").length,
+    inactive: schools.filter((school) => school.status === "Inactive").length,
+  };
+  const schoolsWithMostOpenTickets = [...schools]
+    .map((school) => ({
+      ...school,
+      openTickets: tickets.filter(
+        (ticket) => ticket.schoolId === school.id && ticket.status === "Open",
+      ).length,
+    }))
+    .filter((school) => school.openTickets > 0)
+    .sort((a, b) => b.openTickets - a.openTickets)
+    .slice(0, 4);
   const activity = [12, 19, 15, 26, 21, 31, 24];
   const max = Math.max(...activity);
   return (
@@ -124,6 +147,37 @@ export function Dashboard() {
           </div>
         </Card>
       </div>
+      <Card className="table-card school-overview-card">
+        <div className="card-title">
+          <div>
+            <h2>School overview</h2>
+            <p>Support activity by school</p>
+          </div>
+          <Link to="/schools">View all schools <ArrowUpRight size={14} /></Link>
+        </div>
+        <div className="school-overview-grid">
+          <div className="school-overview-stat">
+            <span>Total Schools</span>
+            <strong>{schoolStats.total}</strong>
+          </div>
+          <div className="school-overview-stat">
+            <span>Active</span>
+            <strong>{schoolStats.active}</strong>
+          </div>
+          <div className="school-overview-stat">
+            <span>Onboarding</span>
+            <strong>{schoolStats.onboarding}</strong>
+          </div>
+          <div className="school-overview-stat">
+            <span>On Hold</span>
+            <strong>{schoolStats.onHold}</strong>
+          </div>
+          <div className="school-overview-stat">
+            <span>Inactive</span>
+            <strong>{schoolStats.inactive}</strong>
+          </div>
+        </div>
+      </Card>
       <div className="dashboard-grid lower">
         <Card className="table-card">
           <div className="card-title">
@@ -191,6 +245,31 @@ export function Dashboard() {
           </div>
         </Card>
       </div>
+      <Card className="table-card school-priority-card">
+        <div className="card-title">
+          <div>
+            <h2>Schools with most open tickets</h2>
+            <p>Active support queues by school</p>
+          </div>
+        </div>
+        <div className="school-open-list">
+          {schoolsWithMostOpenTickets.map((school) => (
+            <Link
+              to={`/schools/${school.id}`}
+              key={school.id}
+              className="school-open-item"
+            >
+              <div className="school-open-meta">
+                <strong>{school.name}</strong>
+                <small>{school.status}</small>
+              </div>
+              <span className="school-open-count">
+                {school.openTickets} Open Ticket{school.openTickets === 1 ? "" : "s"}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </Card>
     </>
   );
 }
